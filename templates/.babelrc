@@ -1,0 +1,9 @@
+{
+  "presets": [
+    <%- presets.join(", ") %>
+  ]<% if (plugins.length > 0) { %>,
+  "plugins": [
+    <%- plugins.join(", ") %>
+  ]
+  <% } %>
+}
