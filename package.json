@@ -7,11 +7,11 @@
   "author": "wcastand <wcastand@gmail.com> (https://github.com/wcastand)",
   "license": "MIT",
   "dependencies": {
-    "eslint": "4.5.0",
     "yeoman-environment": "2.0.2",
     "yeoman-generator": "1.1.1"
   },
   "devDependencies": {
+    "eslint": "4.5.0",
     "eslint-config-standard": "10.2.1",
     "eslint-plugin-import": "2.7.0",
     "eslint-plugin-node": "5.1.1",

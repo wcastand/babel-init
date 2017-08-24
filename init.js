@@ -34,67 +34,131 @@ module.exports = class extends Generator {
         name: 'type',
         message: 'How do you want to configure your babel project :',
         choices: [
-          {name: 'Using presets (recommended for new users)', value: 'presets'},
-          {name: 'Choose my transformers', value: 'advanced'},
+          {
+            name:
+              'Ready to go (env, stage-3) Basic ES6-7 functionnality. Recommended for new user',
+            value: 'basic',
+          },
+          {name: 'Cutting edge (env, stage-0)', value: 'edge'},
+          {name: 'React', value: 'react'},
+          {name: 'Typescript', value: 'typescript'},
+          {
+            name:
+              'Custom (Advanced, you need to know the name of the packages)',
+            value: 'custom',
+          },
         ],
       },
     ])
   }
-  _q2() {
+  _custom() {
     return this.prompt([
       {
-        type: 'list',
-        name: 'preset',
-        message: 'Choose the preset you want :',
-        choices: p1,
+        type: 'input',
+        name: 'presets',
+        message: 'Type a comma separated list of the babel presets you want:',
       },
       {
-        type: 'list',
-        name: 'stagePreset',
-        message: 'Do you want aditional preset ?',
-        choices: p3,
+        type: 'input',
+        name: 'plugins',
+        message: 'Type a comma separated list of the babel plugins you want:',
       },
-      {
-        type: 'confirm',
-        name: 'react',
-        message: 'Do you use react ?',
-        default: false,
-      },
+    ]).then(({presets, plugins}) => {
+      this.presets = presets !== '' ? presets.split(',') : []
+      this.plugins = plugins !== '' ? plugins.split(',') : []
+    })
+  }
+  _react() {
+    return this.prompt([
       {
         type: 'confirm',
         name: 'flow',
         message: 'Do you use flow ?',
         default: false,
       },
-    ]).then(({preset, stagePreset, react, flow}) => {
-      this.presets = [preset]
-      if (stagePreset !== null) this.presets.push(stagePreset)
-      if (react) this.presets.push('babel-preset-react')
-      if (flow) this.presets.push('babel-preset-flow')
-    })
-  }
-  _q3() {
-    return null
+    ]).then(({flow}) => (this.flow = flow))
   }
   prompting() {
     return this._q1().then(({yarn, type}) => {
       this.yarn = yarn
-      return type === 'presets' ? this._q2() : this._q3()
+      this.type = type
+      switch (type) {
+        case 'react':
+          return this._react()
+        case 'custom':
+          return this._custom()
+        default:
+          break
+      }
     })
   }
   configuring() {
     this.sourceRoot(path.resolve(__dirname, 'templates'))
-    this.fs.copyTpl(
-      this.templatePath('.babelrc'),
-      this.destinationPath('.babelrc'),
-      {
-        presets: this.presets.map(p => `"${p.replace('babel-preset-', '')}"`),
-        plugins: [],
-      }
-    )
+    switch (this.type) {
+      case 'basic':
+        this.fs.copyTpl(
+          this.templatePath('.babelrc-basic'),
+          this.destinationPath('.babelrc')
+        )
+        break
+      case 'edge':
+        this.fs.copyTpl(
+          this.templatePath('.babelrc-edge'),
+          this.destinationPath('.babelrc')
+        )
+        break
+      case 'react':
+        this.fs.copyTpl(
+          this.templatePath('.babelrc-react'),
+          this.destinationPath('.babelrc'),
+          {flow: this.flow}
+        )
+        break
+      case 'typescript':
+        this.fs.copyTpl(
+          this.templatePath('.babelrc-typescript'),
+          this.destinationPath('.babelrc')
+        )
+        break
+      case 'custom':
+        this.fs.copyTpl(
+          this.templatePath('.babelrc'),
+          this.destinationPath('.babelrc'),
+          {
+            presets: this.presets.map(s => s.replace('babel-preset-', '')),
+            plugins: this.plugins.map(s => s.replace('babel-plugin-', '')),
+          }
+        )
+        break
+      default:
+        break
+    }
   }
   install() {
-    if (this.yarn) this.yarnInstall(this.presets, {dev: true})
-    else this.npmInstall(this.presets, {'save-dev': true})
+    const exec = packages => {
+      console.log(packages)
+      if (this.yarn) this.yarnInstall(packages, {dev: true})
+      else this.npmInstall(packages, {'save-dev': true})
+    }
+    switch (this.type) {
+      case 'basic':
+        return exec(['babel-preset-env', 'babel-preset-stage-3'])
+      case 'edge':
+        return exec(['babel-preset-env', 'babel-preset-stage-0'])
+      case 'react':
+        const packages = [
+          'babel-preset-env',
+          'babel-preset-stage-3',
+          'babel-preset-react',
+        ]
+        if (this.flow) packages.push('babel-preset-flow')
+        return exec(packages)
+      case 'typescript':
+        return exec(['babel-preset-env', 'babel-preset-typescript'])
+      case 'custom':
+        return exec([...this.presets, ...this.plugins])
+      default:
+        return null
+    }
   }
 }

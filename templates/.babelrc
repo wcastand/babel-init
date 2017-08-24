@@ -1,9 +1,4 @@
 {
-  "presets": [
-    <%- presets.join(", ") %>
-  ]<% if (plugins.length > 0) { %>,
-  "plugins": [
-    <%- plugins.join(", ") %>
-  ]
-  <% } %>
+  "presets": [<%- if(plugins.length > 0) { %>"<%- presets.join('", "') %>"<%- } %>],
+  "plugins": [<%- if(plugins.length > 0) { %>"<%- plugins.join('", "') %>"<%- } %>]
 }
