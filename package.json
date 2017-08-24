@@ -5,6 +5,10 @@
   "bin": "index.js",
   "author": "wcastand <wcastand@gmail.com> (https://github.com/wcastand)",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wcastand/babel-init"
+  },
   "scripts": {
     "format": "prettier --trailing-comma es5 --single-quote --write './*.js'"
   },
