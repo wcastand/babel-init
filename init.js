@@ -1,24 +1,5 @@
-const Generator = require('yeoman-generator')
-const path = require('path')
-
-const p1 = [
-  {name: 'babel-preset-env', value: 'babel-preset-env', checked: true},
-  {name: 'babel-preset-es2015', value: 'babel-preset-es2015'},
-  {name: 'babel-preset-es2016', value: 'babel-preset-es2016'},
-  {name: 'babel-preset-es2017', value: 'babel-preset-es2017'},
-  {name: 'babel-preset-typescript', value: 'babel-preset-typescript'},
-]
-const p2 = [
-  {name: 'babel-preset-flow', value: 'babel-preset-flow'},
-  {name: 'babel-preset-react', value: 'babel-preset-react'},
-]
-const p3 = [
-  {name: 'none', value: null},
-  {name: 'babel-preset-stage-0', value: 'babel-preset-stage-0'},
-  {name: 'babel-preset-stage-1', value: 'babel-preset-stage-1'},
-  {name: 'babel-preset-stage-2', value: 'babel-preset-stage-2'},
-  {name: 'babel-preset-stage-3', value: 'babel-preset-stage-3'},
-]
+const Generator = require('yeoman-generator');
+const path = require('path');
 
 module.exports = class extends Generator {
   _q1() {
@@ -39,9 +20,9 @@ module.exports = class extends Generator {
               'Ready to go (env, stage-3) Basic ES6-7 functionnality. Recommended for new user',
             value: 'basic',
           },
-          {name: 'Cutting edge (env, stage-0)', value: 'edge'},
-          {name: 'React', value: 'react'},
-          {name: 'Typescript', value: 'typescript'},
+          { name: 'Cutting edge (env, stage-0)', value: 'edge' },
+          { name: 'React', value: 'react' },
+          { name: 'Typescript', value: 'typescript' },
           {
             name:
               'Custom (Advanced, you need to know the name of the packages)',
@@ -49,7 +30,7 @@ module.exports = class extends Generator {
           },
         ],
       },
-    ])
+    ]);
   }
   _custom() {
     return this.prompt([
@@ -63,10 +44,10 @@ module.exports = class extends Generator {
         name: 'plugins',
         message: 'Type a comma separated list of the babel plugins you want:',
       },
-    ]).then(({presets, plugins}) => {
-      this.presets = presets !== '' ? presets.replace(' ', '').split(',') : []
-      this.plugins = plugins !== '' ? plugins.replace(' ', '').split(',') : []
-    })
+    ]).then(({ presets, plugins }) => {
+      this.presets = presets !== '' ? presets.replace(' ', '').split(',') : [];
+      this.plugins = plugins !== '' ? plugins.replace(' ', '').split(',') : [];
+    });
   }
   _react() {
     return this.prompt([
@@ -76,50 +57,50 @@ module.exports = class extends Generator {
         message: 'Do you use flow ?',
         default: false,
       },
-    ]).then(({flow}) => (this.flow = flow))
+    ]).then(({ flow }) => (this.flow = flow));
   }
   prompting() {
-    return this._q1().then(({yarn, type}) => {
-      this.yarn = yarn
-      this.type = type
+    return this._q1().then(({ yarn, type }) => {
+      this.yarn = yarn;
+      this.type = type;
       switch (type) {
         case 'react':
-          return this._react()
+          return this._react();
         case 'custom':
-          return this._custom()
+          return this._custom();
         default:
-          break
+          break;
       }
-    })
+    });
   }
   configuring() {
-    this.sourceRoot(path.resolve(__dirname, 'templates'))
+    this.sourceRoot(path.resolve(__dirname, 'templates'));
     switch (this.type) {
       case 'basic':
         this.fs.copyTpl(
           this.templatePath('.babelrc-basic'),
           this.destinationPath('.babelrc')
-        )
-        break
+        );
+        break;
       case 'edge':
         this.fs.copyTpl(
           this.templatePath('.babelrc-edge'),
           this.destinationPath('.babelrc')
-        )
-        break
+        );
+        break;
       case 'react':
         this.fs.copyTpl(
           this.templatePath('.babelrc-react'),
           this.destinationPath('.babelrc'),
-          {flow: this.flow}
-        )
-        break
+          { flow: this.flow }
+        );
+        break;
       case 'typescript':
         this.fs.copyTpl(
           this.templatePath('.babelrc-typescript'),
           this.destinationPath('.babelrc')
-        )
-        break
+        );
+        break;
       case 'custom':
         this.fs.copyTpl(
           this.templatePath('.babelrc'),
@@ -128,39 +109,39 @@ module.exports = class extends Generator {
             presets: this.presets,
             plugins: this.plugins,
           }
-        )
-        break
+        );
+        break;
       default:
-        break
+        break;
     }
   }
   install() {
     const exec = packages => {
-      if (this.yarn) this.yarnInstall(packages, {dev: true})
-      else this.npmInstall(packages, {'save-dev': true})
-    }
+      if (this.yarn) this.yarnInstall(packages, { dev: true });
+      else this.npmInstall(packages, { 'save-dev': true });
+    };
     switch (this.type) {
       case 'basic':
-        return exec(['babel-preset-env', 'babel-preset-stage-3'])
+        return exec(['babel-preset-env', 'babel-preset-stage-3']);
       case 'edge':
-        return exec(['babel-preset-env', 'babel-preset-stage-0'])
+        return exec(['babel-preset-env', 'babel-preset-stage-0']);
       case 'react':
         const packages = [
           'babel-preset-env',
           'babel-preset-stage-3',
           'babel-preset-react',
-        ]
-        if (this.flow) packages.push('babel-preset-flow')
-        return exec(packages)
+        ];
+        if (this.flow) packages.push('babel-preset-flow');
+        return exec(packages);
       case 'typescript':
-        return exec(['babel-preset-env', 'babel-preset-typescript'])
+        return exec(['babel-preset-env', 'babel-preset-typescript']);
       case 'custom':
         return exec([
           ...this.presets.map(s => `babel-preset-${s}`),
           ...this.plugins.map(s => `babel-plugin-${s}`),
-        ])
+        ]);
       default:
-        return null
+        return null;
     }
   }
-}
+};
