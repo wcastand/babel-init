@@ -7,7 +7,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/wcastand/babel-init"
+    "url": "https://github.com/wcastand/init-babel"
   },
   "scripts": {
     "format": "prettier --trailing-comma es5 --single-quote --write './*.js'"
