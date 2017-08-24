@@ -64,8 +64,8 @@ module.exports = class extends Generator {
         message: 'Type a comma separated list of the babel plugins you want:',
       },
     ]).then(({presets, plugins}) => {
-      this.presets = presets !== '' ? presets.split(',') : []
-      this.plugins = plugins !== '' ? plugins.split(',') : []
+      this.presets = presets !== '' ? presets.replace(' ', '').split(',') : []
+      this.plugins = plugins !== '' ? plugins.replace(' ', '').split(',') : []
     })
   }
   _react() {
@@ -125,8 +125,8 @@ module.exports = class extends Generator {
           this.templatePath('.babelrc'),
           this.destinationPath('.babelrc'),
           {
-            presets: this.presets.map(s => s.replace('babel-preset-', '')),
-            plugins: this.plugins.map(s => s.replace('babel-plugin-', '')),
+            presets: this.presets,
+            plugins: this.plugins,
           }
         )
         break
@@ -136,7 +136,6 @@ module.exports = class extends Generator {
   }
   install() {
     const exec = packages => {
-      console.log(packages)
       if (this.yarn) this.yarnInstall(packages, {dev: true})
       else this.npmInstall(packages, {'save-dev': true})
     }
@@ -156,7 +155,10 @@ module.exports = class extends Generator {
       case 'typescript':
         return exec(['babel-preset-env', 'babel-preset-typescript'])
       case 'custom':
-        return exec([...this.presets, ...this.plugins])
+        return exec([
+          ...this.presets.map(s => `babel-preset-${s}`),
+          ...this.plugins.map(s => `babel-plugin-${s}`),
+        ])
       default:
         return null
     }
