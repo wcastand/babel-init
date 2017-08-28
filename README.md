@@ -7,6 +7,8 @@
 [![version][version-badge]][package]
 [![MIT License][license-badge]][LICENSE]
 
+![screencast](./screencast.gif)
+
 ## Install
 
 ```
