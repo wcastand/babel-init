@@ -1,6 +1,6 @@
 {
   "name": "init-babel",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "help generate basic babel setup",
   "bin": "index.js",
   "author": "wcastand <wcastand@gmail.com> (https://github.com/wcastand)",
