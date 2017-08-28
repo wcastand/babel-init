@@ -1,7 +1,7 @@
 module.exports = {
   yarn: 'Voulez-vous utiliser yarn plutôt que npm ?',
   type: 'Choisissez un preset de configuration ou créez la vous-même',
-  basic: 'es6-7 - Recommandé pour les nouveaux utilisateurs - (env, stage-3)',
+  basic: 'ES7 - Recommandé pour les nouveaux utilisateurs - (env, stage-3)',
   edge: 'Expérimentale - (env, stage-0)',
   react: 'React',
   typescript: 'Typescript',

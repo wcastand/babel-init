@@ -11,12 +11,18 @@
 
 ```
   yarn global add init-babel
-  npm global install init-babel
+  npm install -g init-babel
 ```
 
 ## Basic Usage
 ```bash
 $ init-babel
+```
+
+You can use it with [npx](https://github.com/zkat/npx)
+
+```bash
+$ npx init-babel
 ```
 
 ## LICENSE
